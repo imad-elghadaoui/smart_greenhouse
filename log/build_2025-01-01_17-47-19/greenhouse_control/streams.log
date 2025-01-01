@@ -1,0 +1,43 @@
+[0.550s] Invoking command in '/home/imad/smart_greenhouse_ws/src/greenhouse_control': PYTHONPATH=/home/imad/smart_greenhouse_ws/build/greenhouse_control/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/imad/smart_greenhouse_ws/install/greenhouse_control/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/greenhouse_control build --build-base /home/imad/smart_greenhouse_ws/build/greenhouse_control/build install --record /home/imad/smart_greenhouse_ws/build/greenhouse_control/install.log --single-version-externally-managed install_data
+[0.747s] running egg_info
+[0.747s] creating ../../build/greenhouse_control/greenhouse_control.egg-info
+[0.747s] writing ../../build/greenhouse_control/greenhouse_control.egg-info/PKG-INFO
+[0.747s] writing dependency_links to ../../build/greenhouse_control/greenhouse_control.egg-info/dependency_links.txt
+[0.747s] writing entry points to ../../build/greenhouse_control/greenhouse_control.egg-info/entry_points.txt
+[0.748s] writing requirements to ../../build/greenhouse_control/greenhouse_control.egg-info/requires.txt
+[0.748s] writing top-level names to ../../build/greenhouse_control/greenhouse_control.egg-info/top_level.txt
+[0.748s] writing manifest file '../../build/greenhouse_control/greenhouse_control.egg-info/SOURCES.txt'
+[0.749s] reading manifest file '../../build/greenhouse_control/greenhouse_control.egg-info/SOURCES.txt'
+[0.750s] writing manifest file '../../build/greenhouse_control/greenhouse_control.egg-info/SOURCES.txt'
+[0.750s] running build
+[0.750s] running build_py
+[0.750s] creating /home/imad/smart_greenhouse_ws/build/greenhouse_control/build
+[0.750s] creating /home/imad/smart_greenhouse_ws/build/greenhouse_control/build/lib
+[0.750s] creating /home/imad/smart_greenhouse_ws/build/greenhouse_control/build/lib/greenhouse_control
+[0.750s] copying greenhouse_control/irrigation_node.py -> /home/imad/smart_greenhouse_ws/build/greenhouse_control/build/lib/greenhouse_control
+[0.750s] copying greenhouse_control/__init__.py -> /home/imad/smart_greenhouse_ws/build/greenhouse_control/build/lib/greenhouse_control
+[0.750s] copying greenhouse_control/ventilation_node.py -> /home/imad/smart_greenhouse_ws/build/greenhouse_control/build/lib/greenhouse_control
+[0.750s] running install
+[0.751s] running install_lib
+[0.751s] creating /home/imad/smart_greenhouse_ws/install/greenhouse_control/lib/python3.10/site-packages/greenhouse_control
+[0.751s] copying /home/imad/smart_greenhouse_ws/build/greenhouse_control/build/lib/greenhouse_control/irrigation_node.py -> /home/imad/smart_greenhouse_ws/install/greenhouse_control/lib/python3.10/site-packages/greenhouse_control
+[0.751s] copying /home/imad/smart_greenhouse_ws/build/greenhouse_control/build/lib/greenhouse_control/__init__.py -> /home/imad/smart_greenhouse_ws/install/greenhouse_control/lib/python3.10/site-packages/greenhouse_control
+[0.751s] copying /home/imad/smart_greenhouse_ws/build/greenhouse_control/build/lib/greenhouse_control/ventilation_node.py -> /home/imad/smart_greenhouse_ws/install/greenhouse_control/lib/python3.10/site-packages/greenhouse_control
+[0.751s] byte-compiling /home/imad/smart_greenhouse_ws/install/greenhouse_control/lib/python3.10/site-packages/greenhouse_control/irrigation_node.py to irrigation_node.cpython-310.pyc
+[0.752s] byte-compiling /home/imad/smart_greenhouse_ws/install/greenhouse_control/lib/python3.10/site-packages/greenhouse_control/__init__.py to __init__.cpython-310.pyc
+[0.752s] byte-compiling /home/imad/smart_greenhouse_ws/install/greenhouse_control/lib/python3.10/site-packages/greenhouse_control/ventilation_node.py to ventilation_node.cpython-310.pyc
+[0.752s] running install_data
+[0.752s] creating /home/imad/smart_greenhouse_ws/install/greenhouse_control/share
+[0.753s] creating /home/imad/smart_greenhouse_ws/install/greenhouse_control/share/ament_index
+[0.753s] creating /home/imad/smart_greenhouse_ws/install/greenhouse_control/share/ament_index/resource_index
+[0.753s] creating /home/imad/smart_greenhouse_ws/install/greenhouse_control/share/ament_index/resource_index/packages
+[0.753s] copying resource/greenhouse_control -> /home/imad/smart_greenhouse_ws/install/greenhouse_control/share/ament_index/resource_index/packages
+[0.753s] creating /home/imad/smart_greenhouse_ws/install/greenhouse_control/share/greenhouse_control
+[0.753s] copying package.xml -> /home/imad/smart_greenhouse_ws/install/greenhouse_control/share/greenhouse_control
+[0.753s] running install_egg_info
+[0.754s] Copying ../../build/greenhouse_control/greenhouse_control.egg-info to /home/imad/smart_greenhouse_ws/install/greenhouse_control/lib/python3.10/site-packages/greenhouse_control-0.1.0-py3.10.egg-info
+[0.754s] running install_scripts
+[0.769s] Installing irrigation_node script to /home/imad/smart_greenhouse_ws/install/greenhouse_control/lib/greenhouse_control
+[0.769s] Installing ventilation_node script to /home/imad/smart_greenhouse_ws/install/greenhouse_control/lib/greenhouse_control
+[0.769s] writing list of installed files to '/home/imad/smart_greenhouse_ws/build/greenhouse_control/install.log'
+[0.793s] Invoked command in '/home/imad/smart_greenhouse_ws/src/greenhouse_control' returned '0': PYTHONPATH=/home/imad/smart_greenhouse_ws/build/greenhouse_control/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/imad/smart_greenhouse_ws/install/greenhouse_control/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/greenhouse_control build --build-base /home/imad/smart_greenhouse_ws/build/greenhouse_control/build install --record /home/imad/smart_greenhouse_ws/build/greenhouse_control/install.log --single-version-externally-managed install_data

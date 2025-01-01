@@ -1,0 +1,41 @@
+running egg_info
+creating ../../build/greenhouse_control/greenhouse_control.egg-info
+writing ../../build/greenhouse_control/greenhouse_control.egg-info/PKG-INFO
+writing dependency_links to ../../build/greenhouse_control/greenhouse_control.egg-info/dependency_links.txt
+writing entry points to ../../build/greenhouse_control/greenhouse_control.egg-info/entry_points.txt
+writing requirements to ../../build/greenhouse_control/greenhouse_control.egg-info/requires.txt
+writing top-level names to ../../build/greenhouse_control/greenhouse_control.egg-info/top_level.txt
+writing manifest file '../../build/greenhouse_control/greenhouse_control.egg-info/SOURCES.txt'
+reading manifest file '../../build/greenhouse_control/greenhouse_control.egg-info/SOURCES.txt'
+writing manifest file '../../build/greenhouse_control/greenhouse_control.egg-info/SOURCES.txt'
+running build
+running build_py
+creating /home/imad/smart_greenhouse_ws/build/greenhouse_control/build
+creating /home/imad/smart_greenhouse_ws/build/greenhouse_control/build/lib
+creating /home/imad/smart_greenhouse_ws/build/greenhouse_control/build/lib/greenhouse_control
+copying greenhouse_control/irrigation_node.py -> /home/imad/smart_greenhouse_ws/build/greenhouse_control/build/lib/greenhouse_control
+copying greenhouse_control/__init__.py -> /home/imad/smart_greenhouse_ws/build/greenhouse_control/build/lib/greenhouse_control
+copying greenhouse_control/ventilation_node.py -> /home/imad/smart_greenhouse_ws/build/greenhouse_control/build/lib/greenhouse_control
+running install
+running install_lib
+creating /home/imad/smart_greenhouse_ws/install/greenhouse_control/lib/python3.10/site-packages/greenhouse_control
+copying /home/imad/smart_greenhouse_ws/build/greenhouse_control/build/lib/greenhouse_control/irrigation_node.py -> /home/imad/smart_greenhouse_ws/install/greenhouse_control/lib/python3.10/site-packages/greenhouse_control
+copying /home/imad/smart_greenhouse_ws/build/greenhouse_control/build/lib/greenhouse_control/__init__.py -> /home/imad/smart_greenhouse_ws/install/greenhouse_control/lib/python3.10/site-packages/greenhouse_control
+copying /home/imad/smart_greenhouse_ws/build/greenhouse_control/build/lib/greenhouse_control/ventilation_node.py -> /home/imad/smart_greenhouse_ws/install/greenhouse_control/lib/python3.10/site-packages/greenhouse_control
+byte-compiling /home/imad/smart_greenhouse_ws/install/greenhouse_control/lib/python3.10/site-packages/greenhouse_control/irrigation_node.py to irrigation_node.cpython-310.pyc
+byte-compiling /home/imad/smart_greenhouse_ws/install/greenhouse_control/lib/python3.10/site-packages/greenhouse_control/__init__.py to __init__.cpython-310.pyc
+byte-compiling /home/imad/smart_greenhouse_ws/install/greenhouse_control/lib/python3.10/site-packages/greenhouse_control/ventilation_node.py to ventilation_node.cpython-310.pyc
+running install_data
+creating /home/imad/smart_greenhouse_ws/install/greenhouse_control/share
+creating /home/imad/smart_greenhouse_ws/install/greenhouse_control/share/ament_index
+creating /home/imad/smart_greenhouse_ws/install/greenhouse_control/share/ament_index/resource_index
+creating /home/imad/smart_greenhouse_ws/install/greenhouse_control/share/ament_index/resource_index/packages
+copying resource/greenhouse_control -> /home/imad/smart_greenhouse_ws/install/greenhouse_control/share/ament_index/resource_index/packages
+creating /home/imad/smart_greenhouse_ws/install/greenhouse_control/share/greenhouse_control
+copying package.xml -> /home/imad/smart_greenhouse_ws/install/greenhouse_control/share/greenhouse_control
+running install_egg_info
+Copying ../../build/greenhouse_control/greenhouse_control.egg-info to /home/imad/smart_greenhouse_ws/install/greenhouse_control/lib/python3.10/site-packages/greenhouse_control-0.1.0-py3.10.egg-info
+running install_scripts
+Installing irrigation_node script to /home/imad/smart_greenhouse_ws/install/greenhouse_control/lib/greenhouse_control
+Installing ventilation_node script to /home/imad/smart_greenhouse_ws/install/greenhouse_control/lib/greenhouse_control
+writing list of installed files to '/home/imad/smart_greenhouse_ws/build/greenhouse_control/install.log'

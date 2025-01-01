@@ -1,0 +1,4 @@
+[console_scripts]
+humidity_node = greenhouse_sensors.humidity_node:main
+temperature_node = greenhouse_sensors.temperature_node:main
+

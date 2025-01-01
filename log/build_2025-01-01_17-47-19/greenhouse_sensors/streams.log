@@ -1,0 +1,43 @@
+[0.800s] Invoking command in '/home/imad/smart_greenhouse_ws/src/greenhouse_sensors': PYTHONPATH=/home/imad/smart_greenhouse_ws/build/greenhouse_sensors/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/imad/smart_greenhouse_ws/install/greenhouse_sensors/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/greenhouse_sensors build --build-base /home/imad/smart_greenhouse_ws/build/greenhouse_sensors/build install --record /home/imad/smart_greenhouse_ws/build/greenhouse_sensors/install.log --single-version-externally-managed install_data
+[0.960s] running egg_info
+[0.960s] creating ../../build/greenhouse_sensors/greenhouse_sensors.egg-info
+[0.960s] writing ../../build/greenhouse_sensors/greenhouse_sensors.egg-info/PKG-INFO
+[0.960s] writing dependency_links to ../../build/greenhouse_sensors/greenhouse_sensors.egg-info/dependency_links.txt
+[0.960s] writing entry points to ../../build/greenhouse_sensors/greenhouse_sensors.egg-info/entry_points.txt
+[0.960s] writing requirements to ../../build/greenhouse_sensors/greenhouse_sensors.egg-info/requires.txt
+[0.960s] writing top-level names to ../../build/greenhouse_sensors/greenhouse_sensors.egg-info/top_level.txt
+[0.960s] writing manifest file '../../build/greenhouse_sensors/greenhouse_sensors.egg-info/SOURCES.txt'
+[0.962s] reading manifest file '../../build/greenhouse_sensors/greenhouse_sensors.egg-info/SOURCES.txt'
+[0.962s] writing manifest file '../../build/greenhouse_sensors/greenhouse_sensors.egg-info/SOURCES.txt'
+[0.962s] running build
+[0.963s] running build_py
+[0.963s] creating /home/imad/smart_greenhouse_ws/build/greenhouse_sensors/build
+[0.963s] creating /home/imad/smart_greenhouse_ws/build/greenhouse_sensors/build/lib
+[0.963s] creating /home/imad/smart_greenhouse_ws/build/greenhouse_sensors/build/lib/greenhouse_sensors
+[0.963s] copying greenhouse_sensors/__init__.py -> /home/imad/smart_greenhouse_ws/build/greenhouse_sensors/build/lib/greenhouse_sensors
+[0.963s] copying greenhouse_sensors/humidity_node.py -> /home/imad/smart_greenhouse_ws/build/greenhouse_sensors/build/lib/greenhouse_sensors
+[0.963s] copying greenhouse_sensors/temperature_node.py -> /home/imad/smart_greenhouse_ws/build/greenhouse_sensors/build/lib/greenhouse_sensors
+[0.963s] running install
+[0.963s] running install_lib
+[0.964s] creating /home/imad/smart_greenhouse_ws/install/greenhouse_sensors/lib/python3.10/site-packages/greenhouse_sensors
+[0.964s] copying /home/imad/smart_greenhouse_ws/build/greenhouse_sensors/build/lib/greenhouse_sensors/__init__.py -> /home/imad/smart_greenhouse_ws/install/greenhouse_sensors/lib/python3.10/site-packages/greenhouse_sensors
+[0.964s] copying /home/imad/smart_greenhouse_ws/build/greenhouse_sensors/build/lib/greenhouse_sensors/humidity_node.py -> /home/imad/smart_greenhouse_ws/install/greenhouse_sensors/lib/python3.10/site-packages/greenhouse_sensors
+[0.964s] copying /home/imad/smart_greenhouse_ws/build/greenhouse_sensors/build/lib/greenhouse_sensors/temperature_node.py -> /home/imad/smart_greenhouse_ws/install/greenhouse_sensors/lib/python3.10/site-packages/greenhouse_sensors
+[0.964s] byte-compiling /home/imad/smart_greenhouse_ws/install/greenhouse_sensors/lib/python3.10/site-packages/greenhouse_sensors/__init__.py to __init__.cpython-310.pyc
+[0.964s] byte-compiling /home/imad/smart_greenhouse_ws/install/greenhouse_sensors/lib/python3.10/site-packages/greenhouse_sensors/humidity_node.py to humidity_node.cpython-310.pyc
+[0.964s] byte-compiling /home/imad/smart_greenhouse_ws/install/greenhouse_sensors/lib/python3.10/site-packages/greenhouse_sensors/temperature_node.py to temperature_node.cpython-310.pyc
+[0.965s] running install_data
+[0.965s] creating /home/imad/smart_greenhouse_ws/install/greenhouse_sensors/share
+[0.965s] creating /home/imad/smart_greenhouse_ws/install/greenhouse_sensors/share/ament_index
+[0.965s] creating /home/imad/smart_greenhouse_ws/install/greenhouse_sensors/share/ament_index/resource_index
+[0.965s] creating /home/imad/smart_greenhouse_ws/install/greenhouse_sensors/share/ament_index/resource_index/packages
+[0.965s] copying resource/greenhouse_sensors -> /home/imad/smart_greenhouse_ws/install/greenhouse_sensors/share/ament_index/resource_index/packages
+[0.965s] creating /home/imad/smart_greenhouse_ws/install/greenhouse_sensors/share/greenhouse_sensors
+[0.965s] copying package.xml -> /home/imad/smart_greenhouse_ws/install/greenhouse_sensors/share/greenhouse_sensors
+[0.965s] running install_egg_info
+[0.966s] Copying ../../build/greenhouse_sensors/greenhouse_sensors.egg-info to /home/imad/smart_greenhouse_ws/install/greenhouse_sensors/lib/python3.10/site-packages/greenhouse_sensors-0.1.0-py3.10.egg-info
+[0.967s] running install_scripts
+[0.980s] Installing humidity_node script to /home/imad/smart_greenhouse_ws/install/greenhouse_sensors/lib/greenhouse_sensors
+[0.980s] Installing temperature_node script to /home/imad/smart_greenhouse_ws/install/greenhouse_sensors/lib/greenhouse_sensors
+[0.980s] writing list of installed files to '/home/imad/smart_greenhouse_ws/build/greenhouse_sensors/install.log'
+[0.998s] Invoked command in '/home/imad/smart_greenhouse_ws/src/greenhouse_sensors' returned '0': PYTHONPATH=/home/imad/smart_greenhouse_ws/build/greenhouse_sensors/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/imad/smart_greenhouse_ws/install/greenhouse_sensors/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/greenhouse_sensors build --build-base /home/imad/smart_greenhouse_ws/build/greenhouse_sensors/build install --record /home/imad/smart_greenhouse_ws/build/greenhouse_sensors/install.log --single-version-externally-managed install_data

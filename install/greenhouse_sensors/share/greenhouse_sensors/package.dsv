@@ -1,0 +1,3 @@
+source;share/greenhouse_sensors/hook/pythonpath.ps1
+source;share/greenhouse_sensors/hook/pythonpath.dsv
+source;share/greenhouse_sensors/hook/pythonpath.sh

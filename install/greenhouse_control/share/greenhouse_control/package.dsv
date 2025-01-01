@@ -1,0 +1,3 @@
+source;share/greenhouse_control/hook/pythonpath.ps1
+source;share/greenhouse_control/hook/pythonpath.dsv
+source;share/greenhouse_control/hook/pythonpath.sh

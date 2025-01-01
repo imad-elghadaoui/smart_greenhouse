@@ -1,0 +1,16 @@
+{
+    "python.autoComplete.extraPaths": [
+        "/home/imad/smart_greenhouse_ws/install/greenhouse_sensors/lib/python3.10/site-packages",
+        "/home/imad/smart_greenhouse_ws/install/greenhouse_monitor/lib/python3.10/site-packages",
+        "/home/imad/smart_greenhouse_ws/install/greenhouse_control/lib/python3.10/site-packages",
+        "/opt/ros/humble/lib/python3.10/site-packages",
+        "/opt/ros/humble/local/lib/python3.10/dist-packages"
+    ],
+    "python.analysis.extraPaths": [
+        "/home/imad/smart_greenhouse_ws/install/greenhouse_sensors/lib/python3.10/site-packages",
+        "/home/imad/smart_greenhouse_ws/install/greenhouse_monitor/lib/python3.10/site-packages",
+        "/home/imad/smart_greenhouse_ws/install/greenhouse_control/lib/python3.10/site-packages",
+        "/opt/ros/humble/lib/python3.10/site-packages",
+        "/opt/ros/humble/local/lib/python3.10/dist-packages"
+    ]
+}

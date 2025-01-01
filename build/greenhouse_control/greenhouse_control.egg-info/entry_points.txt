@@ -1,0 +1,4 @@
+[console_scripts]
+irrigation_node = greenhouse_control.irrigation_node:main
+ventilation_node = greenhouse_control.ventilation_node:main
+
