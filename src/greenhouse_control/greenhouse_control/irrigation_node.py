@@ -38,7 +38,7 @@ class IrrigationController(Node):
         self.declare_parameter('upper_humidity', 60.0)
         self.declare_parameter('min_valid_humidity', 0.0)
         self.declare_parameter('max_valid_humidity', 100.0)
-        self.declare_parameter('state_publish_rate', 1.0)
+        self.declare_parameter('state_publish_rate', 0.0)
 
         self._min_valid = self.get_parameter('min_valid_humidity').value
         self._max_valid = self.get_parameter('max_valid_humidity').value
