@@ -1,0 +1,57 @@
+# Copyright 2026 Imad Elghadaoui
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Default parameters for the smart greenhouse stack.
+# Each block is matched against the node name declared in the node source.
+temperature_sensor:
+  ros__parameters:
+    publish_rate: 1.0
+    set_point: 20.0
+    noise_stddev: 2.0
+    min_valid: -40.0
+    max_valid: 85.0
+
+humidity_sensor:
+  ros__parameters:
+    publish_rate: 1.0
+    set_point: 60.0
+    noise_stddev: 5.0
+    min_valid: 0.0
+    max_valid: 100.0
+
+ventilation_controller:
+  ros__parameters:
+    lower_temperature: 20.0
+    upper_temperature: 25.0
+    min_valid_temperature: -40.0
+    max_valid_temperature: 85.0
+
+irrigation_controller:
+  ros__parameters:
+    lower_humidity: 40.0
+    upper_humidity: 60.0
+    min_valid_humidity: 0.0
+    max_valid_humidity: 100.0
+
+alert_system:
+  ros__parameters:
+    critical_temperature: 30.0
+    alert_cooldown: 10.0
+    min_valid_temperature: -40.0
+    max_valid_temperature: 85.0
+
+data_logger:
+  ros__parameters:
+    log_directory: ''
+    log_filename: greenhouse_log.csv

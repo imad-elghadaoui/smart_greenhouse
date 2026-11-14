@@ -1,0 +1,9 @@
+# Development and lint tooling.
+#
+# Runtime dependencies (rclpy, std_msgs, example_interfaces, launch_ros) are
+# declared in each package's package.xml and installed with rosdep. This file
+# only lists the tools used to run the tests and linters locally.
+flake8>=6.0
+pydocstyle>=6.0
+pytest>=7.0
+pre-commit>=3.0
