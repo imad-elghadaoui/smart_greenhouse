@@ -36,6 +36,7 @@ ventilation_controller:
     upper_temperature: 25.0
     min_valid_temperature: -40.0
     max_valid_temperature: 85.0
+    state_publish_rate: 1.0
 
 irrigation_controller:
   ros__parameters:
@@ -43,6 +44,7 @@ irrigation_controller:
     upper_humidity: 60.0
     min_valid_humidity: 0.0
     max_valid_humidity: 100.0
+    state_publish_rate: 1.0
 
 alert_system:
   ros__parameters:

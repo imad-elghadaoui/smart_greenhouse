@@ -38,6 +38,7 @@ class IrrigationController(Node):
         self.declare_parameter('upper_humidity', 60.0)
         self.declare_parameter('min_valid_humidity', 0.0)
         self.declare_parameter('max_valid_humidity', 100.0)
+        self.declare_parameter('state_publish_rate', 1.0)
 
         self._min_valid = self.get_parameter('min_valid_humidity').value
         self._max_valid = self.get_parameter('max_valid_humidity').value
@@ -52,6 +53,13 @@ class IrrigationController(Node):
             Float32, 'humidity', self._on_humidity, 10)
         self._service = self.create_service(
             SetBool, 'toggle_irrigation', self._on_toggle)
+
+        rate = self.get_parameter('state_publish_rate').value
+        if rate > 0.0:
+            self._timer = self.create_timer(1.0 / rate, self._publish_state)
+        else:
+            self._timer = None
+
         self._publish_state()
         self.get_logger().info(
             'Irrigation controller ready '

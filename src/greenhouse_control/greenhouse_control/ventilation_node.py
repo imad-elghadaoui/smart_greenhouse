@@ -38,6 +38,7 @@ class VentilationController(Node):
         self.declare_parameter('upper_temperature', 25.0)
         self.declare_parameter('min_valid_temperature', -40.0)
         self.declare_parameter('max_valid_temperature', 85.0)
+        self.declare_parameter('state_publish_rate', 1.0)
 
         self._min_valid = self.get_parameter('min_valid_temperature').value
         self._max_valid = self.get_parameter('max_valid_temperature').value
@@ -51,6 +52,13 @@ class VentilationController(Node):
             Float32, 'temperature', self._on_temperature, 10)
         self._service = self.create_service(
             SetBool, 'toggle_ventilation', self._on_toggle)
+
+        rate = self.get_parameter('state_publish_rate').value
+        if rate > 0.0:
+            self._timer = self.create_timer(1.0 / rate, self._publish_state)
+        else:
+            self._timer = None
+
         self._publish_state()
         self.get_logger().info(
             'Ventilation controller ready '
