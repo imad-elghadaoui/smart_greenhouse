@@ -1,33 +1,90 @@
 #!/usr/bin/env python3
+"""Control greenhouse irrigation from the humidity topic."""
 
-import rclpy
+from __future__ import annotations
+
+from typing import List, Optional
+
+from example_interfaces.srv import SetBool
 from rclpy.node import Node
-from std_msgs.msg import String
+from std_msgs.msg import Bool, Float32
+
+from greenhouse_common.runtime import run_node
+from greenhouse_common.validation import is_valid_reading
+from greenhouse_control.control_logic import HysteresisSwitch
+
 
 class IrrigationController(Node):
-    def __init__(self):
+    """Start irrigation when humidity drops and stop it when it recovers."""
+
+    def __init__(self) -> None:
         super().__init__('irrigation_controller')
-        self.timer = self.create_timer(2.0, self.irrigation_cycle)
-        self.irrigation_active = False
-        self.get_logger().info("IrrigationController node started.")
+        self.declare_parameter('lower_humidity', 40.0)
+        self.declare_parameter('upper_humidity', 60.0)
+        self.declare_parameter('min_valid_humidity', 0.0)
+        self.declare_parameter('max_valid_humidity', 100.0)
 
-    def irrigation_cycle(self):
-        """Simulates an irrigation cycle."""
-        if self.irrigation_active:
-            self.get_logger().info("Irrigation in progress...")
+        self._min_valid = self.get_parameter('min_valid_humidity').value
+        self._max_valid = self.get_parameter('max_valid_humidity').value
+        self._switch = HysteresisSwitch(
+            lower_threshold=self.get_parameter('lower_humidity').value,
+            upper_threshold=self.get_parameter('upper_humidity').value,
+            activate_above=False,
+        )
+        self._state_publisher = self.create_publisher(Bool, 'irrigation_state', 10)
+        self._subscription = self.create_subscription(
+            Float32, 'humidity', self._on_humidity, 10)
+        self._service = self.create_service(
+            SetBool, 'toggle_irrigation', self._on_toggle)
+        self._publish_state()
+        self.get_logger().info(
+            'Irrigation controller ready '
+            f'(on below {self._switch.lower_threshold:.1f} %, '
+            f'off above {self._switch.upper_threshold:.1f} %)'
+        )
+
+    @property
+    def is_active(self) -> bool:
+        """Return True while irrigation is running."""
+        return self._switch.state
+
+    def _on_humidity(self, message: Float32) -> None:
+        if not is_valid_reading(message.data, self._min_valid, self._max_valid):
+            self.get_logger().warning(
+                f'Ignoring invalid humidity reading: {message.data!r}',
+                throttle_duration_sec=5.0,
+            )
+            return
+        was_active = self._switch.state
+        is_active = self._switch.update(float(message.data))
+        if is_active == was_active:
+            return
+        self._publish_state()
+        if is_active:
+            self.get_logger().info(
+                f'Humidity {message.data:.1f} % below threshold, irrigation on')
         else:
-            self.get_logger().info("Irrigation is currently off.")
+            self.get_logger().info(
+                f'Humidity {message.data:.1f} % above threshold, irrigation off')
 
-def main(args=None):
-    rclpy.init(args=args)
-    node = IrrigationController()
-    try:
-        rclpy.spin(node)
-    except KeyboardInterrupt:
-        node.get_logger().info("Shutting down IrrigationController node.")
-    finally:
-        node.destroy_node()
-        rclpy.shutdown()
+    def _on_toggle(self, request: SetBool.Request, response: SetBool.Response) -> SetBool.Response:
+        self._switch.set_state(bool(request.data))
+        self._publish_state()
+        response.success = True
+        response.message = 'Irrigation activated' if request.data else 'Irrigation deactivated'
+        self.get_logger().info(f'Manual override: {response.message}')
+        return response
+
+    def _publish_state(self) -> None:
+        message = Bool()
+        message.data = self._switch.state
+        self._state_publisher.publish(message)
+
+
+def main(args: Optional[List[str]] = None) -> None:
+    """Run the irrigation controller node."""
+    run_node(IrrigationController, args)
+
 
 if __name__ == '__main__':
     main()

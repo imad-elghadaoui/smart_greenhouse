@@ -1,52 +1,89 @@
 #!/usr/bin/env python3
+"""Control greenhouse ventilation from the temperature topic."""
 
-import rclpy
-from rclpy.node import Node
-from std_msgs.msg import Float32
+from __future__ import annotations
+
+from typing import List, Optional
+
 from example_interfaces.srv import SetBool
+from rclpy.node import Node
+from std_msgs.msg import Bool, Float32
+
+from greenhouse_common.runtime import run_node
+from greenhouse_common.validation import is_valid_reading
+from greenhouse_control.control_logic import HysteresisSwitch
+
 
 class VentilationController(Node):
-    def __init__(self):
+    """Toggle ventilation on high temperature, with a manual override service."""
+
+    def __init__(self) -> None:
         super().__init__('ventilation_controller')
-        self.subscription = self.create_subscription(
-            Float32,
-            'temperature',
-            self.temperature_callback,
-            10)
-        self.service = self.create_service(
-            SetBool,
-            'toggle_ventilation',
-            self.toggle_ventilation_callback)
-        self.ventilation_active = False
-        self.get_logger().info("VentilationController node started.")
+        self.declare_parameter('lower_temperature', 20.0)
+        self.declare_parameter('upper_temperature', 25.0)
+        self.declare_parameter('min_valid_temperature', -40.0)
+        self.declare_parameter('max_valid_temperature', 85.0)
 
-    def temperature_callback(self, msg):
-        """Handles temperature updates and toggles ventilation if necessary."""
-        if msg.data > 25.0 and not self.ventilation_active:
-            self.ventilation_active = True
-            self.get_logger().info('Temperature too high, activating ventilation.')
-        elif msg.data < 20.0 and self.ventilation_active:
-            self.ventilation_active = False
-            self.get_logger().info('Temperature normal, deactivating ventilation.')
+        self._min_valid = self.get_parameter('min_valid_temperature').value
+        self._max_valid = self.get_parameter('max_valid_temperature').value
+        self._switch = HysteresisSwitch(
+            lower_threshold=self.get_parameter('lower_temperature').value,
+            upper_threshold=self.get_parameter('upper_temperature').value,
+        )
+        self._state_publisher = self.create_publisher(Bool, 'ventilation_state', 10)
+        self._subscription = self.create_subscription(
+            Float32, 'temperature', self._on_temperature, 10)
+        self._service = self.create_service(
+            SetBool, 'toggle_ventilation', self._on_toggle)
+        self._publish_state()
+        self.get_logger().info(
+            'Ventilation controller ready '
+            f'(on above {self._switch.upper_threshold:.1f} degC, '
+            f'off below {self._switch.lower_threshold:.1f} degC)'
+        )
 
-    def toggle_ventilation_callback(self, request, response):
-        """Service callback to manually toggle ventilation."""
-        self.ventilation_active = request.data
+    @property
+    def is_active(self) -> bool:
+        """Return True while ventilation is running."""
+        return self._switch.state
+
+    def _on_temperature(self, message: Float32) -> None:
+        if not is_valid_reading(message.data, self._min_valid, self._max_valid):
+            self.get_logger().warning(
+                f'Ignoring invalid temperature reading: {message.data!r}',
+                throttle_duration_sec=5.0,
+            )
+            return
+        was_active = self._switch.state
+        is_active = self._switch.update(float(message.data))
+        if is_active == was_active:
+            return
+        self._publish_state()
+        if is_active:
+            self.get_logger().info(
+                f'Temperature {message.data:.1f} degC above threshold, ventilation on')
+        else:
+            self.get_logger().info(
+                f'Temperature {message.data:.1f} degC below threshold, ventilation off')
+
+    def _on_toggle(self, request: SetBool.Request, response: SetBool.Response) -> SetBool.Response:
+        self._switch.set_state(bool(request.data))
+        self._publish_state()
         response.success = True
-        response.message = f'Ventilation {"activated" if request.data else "deactivated"}'
-        self.get_logger().info(response.message)
+        response.message = 'Ventilation activated' if request.data else 'Ventilation deactivated'
+        self.get_logger().info(f'Manual override: {response.message}')
         return response
 
-def main(args=None):
-    rclpy.init(args=args)
-    node = VentilationController()
-    try:
-        rclpy.spin(node)
-    except KeyboardInterrupt:
-        node.get_logger().info("Shutting down VentilationController node.")
-    finally:
-        node.destroy_node()
-        rclpy.shutdown()
+    def _publish_state(self) -> None:
+        message = Bool()
+        message.data = self._switch.state
+        self._state_publisher.publish(message)
+
+
+def main(args: Optional[List[str]] = None) -> None:
+    """Run the ventilation controller node."""
+    run_node(VentilationController, args)
+
 
 if __name__ == '__main__':
     main()

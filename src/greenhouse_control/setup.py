@@ -12,10 +12,10 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='imadelghadaoui',
-    maintainer_email='imadelghadaoui@gmail.com',
-    description='Greenhouse control package for managing ventilation and irrigation.',
-    license='Apache License 2.0',
+    maintainer='imad-elghadaoui',
+    maintainer_email='imad.elghadaoui@usmba.ac.ma',
+    description='Ventilation and irrigation control for the smart greenhouse.',
+    license='Apache-2.0',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [

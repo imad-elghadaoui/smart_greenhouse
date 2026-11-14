@@ -13,10 +13,10 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='imadelghadaoui',
-    maintainer_email='imadelghadaoui@gmailcom',
-    description='Smart greenhouse sensors package',
-    license='Apache License 2.0',
+    maintainer='imad-elghadaoui',
+    maintainer_email='imad.elghadaoui@usmba.ac.ma',
+    description='Simulated temperature and humidity sensors for the smart greenhouse.',
+    license='Apache-2.0',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [

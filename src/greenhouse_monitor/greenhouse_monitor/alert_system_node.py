@@ -1,60 +1,82 @@
 #!/usr/bin/env python3
+"""Raise alerts and force ventilation when temperature becomes critical."""
 
-import rclpy
-from rclpy.node import Node
-from std_msgs.msg import Float32
+from __future__ import annotations
+
+from typing import List, Optional
+
 from example_interfaces.srv import SetBool
+from rclpy.client import Client
+from rclpy.node import Node
+from rclpy.task import Future
+from std_msgs.msg import Float32
+
+from greenhouse_common.runtime import run_node
+from greenhouse_common.validation import is_valid_reading
+from greenhouse_monitor.monitoring_logic import AlertCooldown, is_critical
+
 
 class AlertSystem(Node):
-    def __init__(self):
+    """Watch the temperature topic and request ventilation on critical readings."""
+
+    def __init__(self) -> None:
         super().__init__('alert_system')
-        self.client = self.create_client(SetBool, 'toggle_ventilation')
-        self.temp_subscription = self.create_subscription(
-            Float32,
-            'temperature',
-            self.temperature_callback,
-            10)
-        self.get_logger().info("AlertSystem node started.")
+        self.declare_parameter('critical_temperature', 30.0)
+        self.declare_parameter('alert_cooldown', 10.0)
+        self.declare_parameter('min_valid_temperature', -40.0)
+        self.declare_parameter('max_valid_temperature', 85.0)
 
-    def temperature_callback(self, msg):
-        """Handles critical temperature alerts."""
-        if msg.data > 30.0:
-            self.send_alert(f'Critical temperature: {msg.data}°C')
-            self.activate_ventilation()
+        self._critical_temperature = self.get_parameter('critical_temperature').value
+        self._min_valid = self.get_parameter('min_valid_temperature').value
+        self._max_valid = self.get_parameter('max_valid_temperature').value
+        self._cooldown = AlertCooldown(self.get_parameter('alert_cooldown').value)
 
-    def send_alert(self, message):
-        """Sends an alert message."""
-        self.get_logger().warn(message)
+        self._client: Client = self.create_client(SetBool, 'toggle_ventilation')
+        self._subscription = self.create_subscription(
+            Float32, 'temperature', self._on_temperature, 10)
+        self.get_logger().info(
+            f'Alert system ready (critical temperature {self._critical_temperature:.1f} degC)')
 
-    def activate_ventilation(self):
-        """Sends a request to activate ventilation."""
-        if not self.client.wait_for_service(timeout_sec=1.0):
-            self.get_logger().error("Ventilation service not available!")
+    def _on_temperature(self, message: Float32) -> None:
+        if not is_valid_reading(message.data, self._min_valid, self._max_valid):
+            self.get_logger().warning(
+                f'Ignoring invalid temperature reading: {message.data!r}',
+                throttle_duration_sec=5.0,
+            )
             return
+        if not is_critical(message.data, self._critical_temperature):
+            return
+        if not self._cooldown.should_alert(self.get_clock().now().nanoseconds / 1e9):
+            return
+        self.get_logger().warning(f'Critical temperature: {message.data:.1f} degC')
+        self._request_ventilation()
 
+    def _request_ventilation(self) -> None:
+        if not self._client.service_is_ready():
+            self.get_logger().error(
+                'Ventilation service is not available', throttle_duration_sec=10.0)
+            return
         request = SetBool.Request()
         request.data = True
-        future = self.client.call_async(request)
-        future.add_done_callback(self.handle_response)
+        future = self._client.call_async(request)
+        future.add_done_callback(self._on_response)
 
-    def handle_response(self, future):
-        """Handles the response from the ventilation service."""
+    def _on_response(self, future: Future) -> None:
         try:
             response = future.result()
-            self.get_logger().info(f"Ventilation response: {response.message}")
-        except Exception as e:
-            self.get_logger().error(f"Service call failed: {str(e)}")
+        except Exception as exc:  # noqa: BLE001 - report any service failure
+            self.get_logger().error(f'Ventilation service call failed: {exc!r}')
+            return
+        if response is None:
+            self.get_logger().error('Ventilation service returned no response')
+            return
+        self.get_logger().info(f'Ventilation service response: {response.message}')
 
-def main(args=None):
-    rclpy.init(args=args)
-    node = AlertSystem()
-    try:
-        rclpy.spin(node)
-    except KeyboardInterrupt:
-        node.get_logger().info("Shutting down AlertSystem node.")
-    finally:
-        node.destroy_node()
-        rclpy.shutdown()
+
+def main(args: Optional[List[str]] = None) -> None:
+    """Run the alert system node."""
+    run_node(AlertSystem, args)
+
 
 if __name__ == '__main__':
     main()

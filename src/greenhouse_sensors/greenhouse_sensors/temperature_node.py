@@ -1,32 +1,34 @@
 #!/usr/bin/env python3
+"""Publish simulated greenhouse temperature readings."""
 
-import rclpy
-from rclpy.node import Node
-from std_msgs.msg import Float32
-import random
+from __future__ import annotations
 
-class TemperatureSensor(Node):
-    def __init__(self):
-        super().__init__('temperature_sensor')
-        self.publisher = self.create_publisher(Float32, 'temperature', 10)
-        self.timer = self.create_timer(1.0, self.publish_temperature)
-        
-    def publish_temperature(self):
-        msg = Float32()
-        msg.data = 20.0 + random.uniform(-2.0, 2.0)
-        self.publisher.publish(msg)
-        self.get_logger().info(f'Publishing temperature: {msg.data}')
+from typing import List, Optional
 
-def main(args=None):
-    rclpy.init(args=args)
-    node = TemperatureSensor()
-    try:
-        rclpy.spin(node)
-    except KeyboardInterrupt:
-        pass
-    finally:
-        node.destroy_node()
-        rclpy.shutdown()
+from greenhouse_common.runtime import run_node
+from greenhouse_sensors.sensor_node import ScalarSensorNode
+
+
+class TemperatureSensor(ScalarSensorNode):
+    """Sensor node publishing temperature in degrees Celsius."""
+
+    def __init__(self) -> None:
+        super().__init__(
+            node_name='temperature_sensor',
+            topic='temperature',
+            unit='degC',
+            set_point=20.0,
+            noise_stddev=2.0,
+            minimum=-40.0,
+            maximum=85.0,
+            publish_rate=1.0,
+        )
+
+
+def main(args: Optional[List[str]] = None) -> None:
+    """Run the temperature sensor node."""
+    run_node(TemperatureSensor, args)
+
 
 if __name__ == '__main__':
     main()

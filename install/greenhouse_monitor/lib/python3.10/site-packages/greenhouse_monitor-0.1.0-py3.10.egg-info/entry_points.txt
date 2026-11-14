@@ -1,4 +1,0 @@
-[console_scripts]
-alert_system_node = greenhouse_monitor.alert_system_node:main
-data_logger_node = greenhouse_monitor.data_logger_node:main
-

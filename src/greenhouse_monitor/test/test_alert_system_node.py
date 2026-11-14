@@ -1,0 +1,32 @@
+"""Behaviour tests for the alert system node (require rclpy)."""
+
+import pytest
+
+rclpy = pytest.importorskip('rclpy')
+
+from std_msgs.msg import Float32  # noqa: E402
+
+from greenhouse_monitor.alert_system_node import AlertSystem  # noqa: E402
+
+
+@pytest.fixture(scope='module', autouse=True)
+def ros_context():
+    rclpy.init()
+    yield
+    rclpy.shutdown()
+
+
+def test_uses_configured_critical_temperature():
+    node = AlertSystem()
+    try:
+        assert node.get_parameter('critical_temperature').value == 30.0
+    finally:
+        node.destroy_node()
+
+
+def test_critical_reading_without_service_does_not_raise():
+    node = AlertSystem()
+    try:
+        node._on_temperature(Float32(data=35.0))
+    finally:
+        node.destroy_node()

@@ -1,27 +1,34 @@
-import rclpy
-from rclpy.node import Node
-from std_msgs.msg import Float32
-import random
+#!/usr/bin/env python3
+"""Publish simulated greenhouse relative humidity readings."""
 
-class HumiditySensor(Node):
-    def __init__(self):
-        super().__init__('humidity_sensor')
-        self.publisher = self.create_publisher(Float32, 'humidity', 10)
-        self.timer = self.create_timer(1.0, self.publish_humidity)
+from __future__ import annotations
 
-    def publish_humidity(self):
-        msg = Float32()
-        msg.data = 60.0 + random.uniform(-5.0, 5.0)  # Simulate humidity
-        self.publisher.publish(msg)
-        self.get_logger().info(f'Publishing humidity: {msg.data}')
+from typing import List, Optional
 
-def main(args=None):
-    rclpy.init(args=args)
-    node = HumiditySensor()
-    try:
-        rclpy.spin(node)
-    except KeyboardInterrupt:
-        pass
-    finally:
-        node.destroy_node()
-        rclpy.shutdown()
+from greenhouse_common.runtime import run_node
+from greenhouse_sensors.sensor_node import ScalarSensorNode
+
+
+class HumiditySensor(ScalarSensorNode):
+    """Sensor node publishing relative humidity as a percentage."""
+
+    def __init__(self) -> None:
+        super().__init__(
+            node_name='humidity_sensor',
+            topic='humidity',
+            unit='%',
+            set_point=60.0,
+            noise_stddev=5.0,
+            minimum=0.0,
+            maximum=100.0,
+            publish_rate=1.0,
+        )
+
+
+def main(args: Optional[List[str]] = None) -> None:
+    """Run the humidity sensor node."""
+    run_node(HumiditySensor, args)
+
+
+if __name__ == '__main__':
+    main()
