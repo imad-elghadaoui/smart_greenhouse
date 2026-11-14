@@ -52,7 +52,7 @@ shared helpers.
 
 | Package | Responsibility |
 | --- | --- |
-| `greenhouse_common` | Shared `run_node` lifecycle helper and sensor-reading validation. |
+| `greenhouse_common` | Shared `run_node` lifecycle helper, reading validation and QoS profiles. |
 | `greenhouse_sensors` | Simulated temperature and humidity acquisition. |
 | `greenhouse_control` | Ventilation and irrigation actuation logic. |
 | `greenhouse_monitor` | Data logging and temperature alerting. |
@@ -94,7 +94,11 @@ humidity_sensor ────/humidity─────▶ irrigation_controller �
 | `/ventilation_state` | `std_msgs/msg/Bool` | Current ventilation actuator state. |
 | `/irrigation_state` | `std_msgs/msg/Bool` | Current irrigation actuator state. |
 
-All topics use the default QoS profile (reliable, depth 10).
+All topics use the default QoS profile (reliable, depth 10) except the two
+actuator state topics. `/ventilation_state` and `/irrigation_state` use a
+reliable, transient-local, depth-1 profile so that a subscriber which connects
+after the stack started immediately receives the current actuator state instead
+of waiting for the next change.
 
 ## Services
 
@@ -212,16 +216,50 @@ colcon test
 colcon test-result --verbose
 ```
 
-The decision logic and helpers are covered by unit tests that do not need a
-running ROS graph. They can be run directly from a package directory:
+The suite covers three levels:
+
+- **Unit tests** for the decision logic and helpers, which do not need a running
+  ROS graph. They can be run directly from a package directory:
+
+  ```bash
+  cd src/greenhouse_control && python3 -m pytest test
+  ```
+
+- **Node tests** that build the nodes and drive their callbacks; they require
+  `rclpy` and are skipped automatically when it is not installed.
+- **An end-to-end launch test** (`greenhouse_bringup`) that starts the whole
+  stack with the real launch file and asserts that the sensor and state topics
+  stream and that the `toggle_ventilation` / `toggle_irrigation` services drive
+  the actuator state topics.
+
+Each package also runs the `ament` linters through `colcon test`:
+`ament_flake8`, `ament_pep257` and `ament_copyright` for the Python packages,
+and `ament_copyright`, `ament_lint_cmake` and `ament_xmllint` for
+`greenhouse_bringup`.
+
+### Pre-commit hooks
+
+The same style checks can be run before committing:
 
 ```bash
-cd src/greenhouse_control && python3 -m pytest test
+pip install pre-commit
+pre-commit install
+pre-commit run --all-files
 ```
 
-Node-level tests build the nodes and drive their callbacks; they require
-`rclpy` and are skipped automatically when it is not installed, as are the
-`ament_flake8` / `ament_pep257` lint tests.
+The hooks (defined in [`.pre-commit-config.yaml`](.pre-commit-config.yaml))
+check YAML syntax, trailing whitespace and file endings, and run `flake8` and
+`pydocstyle` with the same settings as the ROS 2 linters.
+
+## Continuous integration
+
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs on every push and
+pull request:
+
+- a **lint** job that runs the pre-commit hooks on all files;
+- a **build-and-test** job that installs the declared dependencies with
+  `rosdep`, verifies them with `rosdep check`, then builds and tests the five
+  packages with `ros-tooling/action-ros-ci` on ROS 2 Humble.
 
 ## Design notes
 
@@ -235,6 +273,9 @@ Node-level tests build the nodes and drive their callbacks; they require
 - **Non-blocking service calls.** The alert system checks service availability
   without waiting and handles the response asynchronously, so it never blocks
   the executor.
+- **State topics keep the last value.** Actuator state is published with a
+  transient-local QoS profile, so a monitoring tool started after the stack
+  immediately sees the current state instead of waiting for the next change.
 - **Rate-limited alerts.** A cooldown prevents a persistent critical condition
   from flooding the log and the ventilation service.
 - **Clean shutdown.** All nodes share a single `run_node` helper that handles
@@ -253,6 +294,9 @@ Node-level tests build the nodes and drive their callbacks; they require
   there is no external notification channel (email, SMS, MQTT).
 - Only standard message and service types are used; no custom interfaces are
   defined.
+- The nodes are plain `rclpy` processes. ROS 2 Humble cannot load Python nodes
+  into a `component_container`, and `rclpy` does not expose intra-process
+  communication, so no nodelet/composition is used (see below).
 
 ## Future work
 
@@ -260,6 +304,9 @@ Node-level tests build the nodes and drive their callbacks; they require
   behind the existing sensor abstraction.
 - Model actuators as managed lifecycle nodes with a deterministic startup
   order.
+- Port the latency-sensitive nodes to C++ `rclcpp` components (or move to a
+  distribution with Python composition support) to enable intra-process
+  communication and reduce overhead as the stack grows.
 - Persist samples to a database and expose a dashboard.
 - Add diagnostic publishing and a watchdog for sensor timeouts.
 
