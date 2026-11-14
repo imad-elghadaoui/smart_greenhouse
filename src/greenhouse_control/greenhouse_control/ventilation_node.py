@@ -53,11 +53,11 @@ class VentilationController(Node):
         self._service = self.create_service(
             SetBool, 'toggle_ventilation', self._on_toggle)
 
-        rate = self.get_parameter('state_publish_rate').value
+        rate = float(self.get_parameter('state_publish_rate').value)
         if rate > 0.0:
-            self._timer = self.create_timer(1.0 / rate, self._publish_state)
+            self._state_timer = self.create_timer(1.0 / rate, self._publish_state)
         else:
-            self._timer = None
+            self._state_timer = None
 
         self._publish_state()
         self.get_logger().info(

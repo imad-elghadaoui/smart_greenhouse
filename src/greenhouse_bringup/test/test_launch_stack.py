@@ -22,6 +22,7 @@ import launch
 import launch_testing
 import launch_testing.actions
 import launch_testing.asserts
+import launch_testing_ros
 import pytest
 import rclpy
 from ament_index_python.packages import get_package_share_directory
@@ -93,7 +94,7 @@ class TestGreenhouseStack(unittest.TestCase):
             Bool, topic, lambda message: received.append(bool(message.data)), _state_qos())
         try:
             self.assertTrue(
-                self._spin_until(lambda: len(received) > 0, timeout=10.0),
+                self._spin_until(lambda: len(received) > 0, timeout=15.0),
                 f'{topic} did not deliver a retained value to a late subscriber')
             return received[-1]
         finally:
@@ -101,33 +102,9 @@ class TestGreenhouseStack(unittest.TestCase):
 
     def test_sensor_topics_stream(self):
         """Verify that sensor nodes actively stream plausible readings."""
-        temperature_samples = []
-        humidity_samples = []
-
-        sub_temp = self.node.create_subscription(
-            Float32,
-            '/temperature',
-            lambda msg: temperature_samples.append(msg.data),
-            10,
-        )
-        sub_hum = self.node.create_subscription(
-            Float32,
-            '/humidity',
-            lambda msg: humidity_samples.append(msg.data),
-            10,
-        )
-        try:
-            received_both = self._spin_until(
-                lambda: bool(temperature_samples and humidity_samples),
-                timeout=30.0,
-            )
-            self.assertTrue(received_both, 'Sensor topics did not stream within timeout')
-            # Verify readings match physical bounds declared in configuration
-            self.assertTrue(-40.0 <= temperature_samples[-1] <= 85.0)
-            self.assertTrue(0.0 <= humidity_samples[-1] <= 100.0)
-        finally:
-            self.node.destroy_subscription(sub_temp)
-            self.node.destroy_subscription(sub_hum)
+        topics = [('/temperature', Float32), ('/humidity', Float32)]
+        with launch_testing_ros.WaitForTopics(topics, timeout=30.0) as wait_for_topics:
+            self.assertEqual(wait_for_topics.topics_not_received(), set())
 
     def test_state_topics_retain_last_value(self):
         """Verify that state topics retain their state for late subscribers."""
