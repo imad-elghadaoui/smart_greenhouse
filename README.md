@@ -3,24 +3,24 @@
 [![CI](https://github.com/imad-elghadaoui/smart_greenhouse/actions/workflows/ci.yml/badge.svg)](https://github.com/imad-elghadaoui/smart_greenhouse/actions/workflows/ci.yml)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 
-A ROS 2 workspace that simulates a smart greenhouse: two sensor nodes publish
-temperature and humidity, two controllers drive ventilation and irrigation
-using hysteresis, and a monitoring layer logs the data and raises alerts when
+A ROS 2 workspace that simulates a smart greenhouse. Two sensor nodes publish
+temperature and humidity, two controllers drive ventilation and irrigation with
+hysteresis, and a monitoring layer records the readings and raises an alert when
 the temperature becomes critical.
 
-The project is written in Python 3 (ROS 2 Humble, `rclpy`) and focuses on a
-clean separation between pure control logic and the ROS 2 transport layer, so
-that the decision logic is unit-tested without a running ROS graph.
+The stack targets ROS 2 Humble and is written in Python 3 with `rclpy`. Decision
+logic lives in plain Python modules that are independent of the ROS 2 transport
+layer, so it can be unit-tested without a running ROS graph.
 
 ## Features
 
-- Temperature and humidity sensor nodes with configurable calibration and
-  validation of every reading.
+- Temperature and humidity sensor nodes with configurable simulation
+  parameters (set point, noise, valid range) and validation of every reading.
 - Ventilation controller with hysteresis (on above 25 °C, off below 20 °C by
   default) and a manual override service.
 - Irrigation controller driven by humidity with inverted hysteresis (on below
   40 %, off above 60 % by default) and a manual override service.
-- Alert system that requests ventilation through the `toggle_ventilation`
+- Alert system that requests ventilation through the `/toggle_ventilation`
   service, rate-limited by a configurable cooldown.
 - Data logger that prints samples and can append them to a CSV file.
 - All thresholds, rates and bounds exposed as ROS 2 parameters.
@@ -74,6 +74,28 @@ humidity_sensor ────/humidity─────▶ irrigation_controller �
                                    └▶ data_logger
 ```
 
+## Repository layout
+
+The main files and packages are:
+
+```
+smart_greenhouse/
+├── .github/workflows/ci.yml      # lint and build-and-test jobs
+├── .pre-commit-config.yaml       # local style hooks
+├── requirements-dev.txt          # development tooling
+└── src/
+    ├── greenhouse_common/        # shared helpers (no nodes)
+    ├── greenhouse_sensors/       # temperature and humidity nodes
+    ├── greenhouse_control/       # ventilation and irrigation nodes
+    ├── greenhouse_monitor/       # data logger and alert system nodes
+    └── greenhouse_bringup/       # launch file and default parameters
+```
+
+Each application package uses the standard ROS 2 layout: `package.xml`,
+`setup.py`, the Python sources under `<package>/`, and tests under `test/`.
+`greenhouse_bringup` is an `ament_cmake` package that installs the `launch/` and
+`config/` directories.
+
 ## Nodes
 
 | Node | Package | Subscribes | Publishes | Services |
@@ -84,6 +106,10 @@ humidity_sensor ────/humidity─────▶ irrigation_controller �
 | `irrigation_controller` | `greenhouse_control` | `/humidity` | `/irrigation_state` | `/toggle_irrigation` (server) |
 | `alert_system` | `greenhouse_monitor` | `/temperature` | – | `/toggle_ventilation` (client) |
 | `data_logger` | `greenhouse_monitor` | `/temperature`, `/humidity` | – | – |
+
+Node names differ from the executable names: for example,
+`ros2 run greenhouse_sensors temperature_node` starts the node
+`temperature_sensor`. The table lists node names.
 
 ## Topics
 
@@ -112,7 +138,10 @@ from the requested state on the next sensor reading.
 
 ## Parameters
 
-Defaults are defined in `src/greenhouse_bringup/config/greenhouse_params.yaml`.
+Defaults are defined in `src/greenhouse_bringup/config/greenhouse_params.yaml`,
+which the launch file loads. Each top-level key in that file is a node name.
+Override a single value on the command line with
+`--ros-args -p <name>:=<value>`.
 
 | Node | Parameter | Default | Description |
 | --- | --- | --- | --- |
@@ -143,8 +172,8 @@ Defaults are defined in `src/greenhouse_bringup/config/greenhouse_params.yaml`.
 - Python 3.10
 
 Runtime dependencies (`rclpy`, `std_msgs`, `example_interfaces`, `launch_ros`)
-are declared in each package's `package.xml`. Development tools are listed in
-[`requirements-dev.txt`](requirements-dev.txt).
+are declared in the relevant `package.xml` files and resolved by `rosdep`.
+Development tools are listed in [`requirements-dev.txt`](requirements-dev.txt).
 
 ## Installation
 
@@ -248,8 +277,9 @@ pre-commit run --all-files
 ```
 
 The hooks (defined in [`.pre-commit-config.yaml`](.pre-commit-config.yaml))
-check YAML syntax, trailing whitespace and file endings, and run `flake8` and
-`pydocstyle` with the same settings as the ROS 2 linters.
+check YAML syntax, trailing whitespace and file endings, and run `flake8`
+(99-character line limit) and `pydocstyle` with the ROS 2 ignore list. They are
+a fast subset of the full `ament` linters run by `colcon test`.
 
 ## Continuous integration
 
